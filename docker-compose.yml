@@ -1,0 +1,40 @@
+version: "3"
+services:
+  db:
+    image: mysql
+    volumes:
+      - db-data:/var/lib/mysql
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
+      MYSQL_DATABASE: 'sf-react' #création de la DB sf-react
+    networks:
+      - dev
+
+  phpmyadmin:
+    image: phpmyadmin
+    depends_on: #doit correspondre au nom du service créé
+      - db
+    ports:
+      - 8090:80
+    environment:
+      PMA_HOST: db #doit correspondre au nom du service créé
+    networks:
+      - dev  
+      
+  fastapi:
+    build:
+      context: . 
+    container_name: service_web
+    ports:
+      - 5000:80
+    networks:
+      - dev
+    volumes:
+      - ./src:/app/code
+      
+networks:
+  dev:
+
+volumes: 
+  db-data: 
+
